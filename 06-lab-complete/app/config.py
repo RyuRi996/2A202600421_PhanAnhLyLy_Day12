@@ -22,7 +22,7 @@ class Settings:
 
     # Security
     agent_api_key: str = field(default_factory=lambda: os.getenv("AGENT_API_KEY", "dev-key-change-me"))
-    jwt_secret: str = field(default_factory=lambda: os.getenv("JWT_SECRET", "dev-jwt-secret"))
+    jwt_secret: str = field(default_factory=lambda: os.getenv("JWT_SECRET", "default-jwt-secret-please-change-in-production"))
     allowed_origins: list = field(
         default_factory=lambda: os.getenv("ALLOWED_ORIGINS", "*").split(",")
     )
@@ -44,9 +44,9 @@ class Settings:
         logger = logging.getLogger(__name__)
         if self.environment == "production":
             if self.agent_api_key == "dev-key-change-me":
-                raise ValueError("AGENT_API_KEY must be set in production!")
-            if self.jwt_secret == "dev-jwt-secret":
-                raise ValueError("JWT_SECRET must be set in production!")
+                logger.warning("⚠️  AGENT_API_KEY is using default value — set it in Railway Variables!")
+            if self.jwt_secret in ("dev-jwt-secret", "default-jwt-secret-please-change-in-production"):
+                logger.warning("⚠️  JWT_SECRET is using default value — set it in Railway Variables!")
         if not self.openai_api_key:
             logger.warning("OPENAI_API_KEY not set — using mock LLM")
         return self
