@@ -145,7 +145,10 @@ async def request_middleware(request: Request, call_next):
         # Security headers
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers.pop("server", None)
+        try:
+            del response.headers["server"]
+        except KeyError:
+            pass
         duration = round((time.time() - start) * 1000, 1)
         logger.info(json.dumps({
             "event": "request",
