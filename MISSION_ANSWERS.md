@@ -1095,4 +1095,4 @@ python check_production_ready.py
 
 ---
 
-**Railway deploy link:** :  
+**Railway deploy link:** :  https://energetic-adventure-production-27a3.up.railway.app/
