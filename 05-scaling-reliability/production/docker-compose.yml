@@ -8,7 +8,7 @@
 # bởi instance khác nhau, nhưng session vẫn liên tục vì Redis!
 # ============================================================
 
-version: "3.9"
+# version: "3.9"
 
 services:
 

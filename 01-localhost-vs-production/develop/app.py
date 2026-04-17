@@ -7,6 +7,7 @@ Hãy đếm bao nhiêu vấn đề bạn tìm được trong file này.
 import os
 
 from fastapi import FastAPI
+from pydantic import BaseModel
 import uvicorn
 from utils.mock_llm import ask
 
@@ -22,18 +23,22 @@ DEBUG = True
 MAX_TOKENS = 500
 
 
+class AskRequest(BaseModel):
+    question: str
+
+
 @app.get("/")
 def home():
     return {"message": "Hello! Agent is running on my machine :)"}
 
 
 @app.post("/ask")
-def ask_agent(question: str):
+def ask_agent(request: AskRequest):
     # ❌ Vấn đề 3: Print thay vì proper logging
-    print(f"[DEBUG] Got question: {question}")
+    print(f"[DEBUG] Got question: {request.question}")
     print(f"[DEBUG] Using key: {OPENAI_API_KEY}")  # ❌ log ra secret!
 
-    response = ask(question)
+    response = ask(request.question)
 
     print(f"[DEBUG] Response: {response}")
     return {"answer": response}

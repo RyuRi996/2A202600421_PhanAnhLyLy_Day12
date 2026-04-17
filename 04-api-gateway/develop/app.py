@@ -24,10 +24,15 @@ import os
 
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security.api_key import APIKeyHeader
+from pydantic import BaseModel
 import uvicorn
 from utils.mock_llm import ask
 
 app = FastAPI(title="Agent with API Key Auth")
+
+# Model cho request body
+class AskRequest(BaseModel):
+    question: str
 
 # ──────────────────────────────────────
 # API Key setup
@@ -66,13 +71,13 @@ def root():
 
 @app.post("/ask")
 async def ask_agent(
-    question: str,
+    request: AskRequest,
     _key: str = Depends(verify_api_key),  # ✅ require auth
 ):
     """Protected endpoint — cần X-API-Key header"""
     return {
-        "question": question,
-        "answer": ask(question),
+        "question": request.question,
+        "answer": ask(request.question),
     }
 
 

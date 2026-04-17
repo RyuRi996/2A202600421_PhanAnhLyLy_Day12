@@ -20,6 +20,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import uvicorn
 from config import settings
 from utils.mock_llm import ask
@@ -34,6 +35,10 @@ logger = logging.getLogger(__name__)
 # Track startup time cho /health
 START_TIME = time.time()
 is_ready = False  # readiness flag
+
+
+class AskRequest(BaseModel):
+    question: str
 
 
 @asynccontextmanager
@@ -97,12 +102,8 @@ def root():
 
 
 @app.post("/ask")
-async def ask_agent(request: Request):
-    body = await request.json()
-    question = body.get("question", "")
-
-    if not question:
-        raise HTTPException(status_code=422, detail="question field is required")
+async def ask_agent(request_data: AskRequest):
+    question = request_data.question
 
     # ✅ Structured logging — KHÔNG log secrets
     logger.info(json.dumps({
